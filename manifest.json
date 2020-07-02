@@ -1,0 +1,45 @@
+{
+    "name": "Google APIs",
+    "version": "0.1",
+    "description": "Easily interact with Google APIs",
+    "manifest_version": 2,
+    "key": "<YOUR KEY HERE>",
+    "oauth2": {
+        "client_id": "<YOUR CLIENT ID HERE>",
+        "scopes": [
+            "https://www.googleapis.com/auth/drive",
+            "https://www.googleapis.com/auth/classroom.courses",
+            "https://www.googleapis.com/auth/classroom.coursework.students"
+		]
+    },
+    "permissions": [
+        "identity",
+        "declarativeContent",
+        "storage"
+    ],
+    "background": {
+        "scripts": [
+            "/libs/chrome-ext-core/Core.js",
+            "/libs/chrome-ext-core/background.js",
+            
+            "/test/js/background.js"
+        ],
+        "persistent": false
+    },
+    "options_page": "test/pages/options.html",
+    "page_action": {
+        "default_popup": "test/pages/popup.html",
+        "default_icon": {
+            "16": "images/icon16.png",
+            "32": "images/icon32.png",
+            "48": "images/icon48.png",
+            "128": "images/icon128.png"
+        }
+    },
+    "icons": {
+        "16": "images/icon16.png",
+        "32": "images/icon32.png",
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+    }
+}

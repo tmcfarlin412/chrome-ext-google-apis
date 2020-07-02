@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+    </style>
+</head>
+
+<body>
+    <h1>API Tests</h1>
+    <div style="display:flex;">
+
+        <div style="width: 30%;height: 100%;display:block;">
+
+            <h2>Common Google App/Extension APIs</h2>
+            <ul>
+                <li>
+                    <button id="auth">auth</button>
+                </li>
+            </ul>
+            <h2>Drive</h2>
+            <ul>
+                <li>
+                    <input id="filesListQueryParams" placeholder="Query Params" type="text" />
+                    <button id="filesList">files.list</button>
+                </li>
+                <li>
+                    <input id="filesGetID" placeholder="File ID" type="text" />
+                    <input id="filesGetQueryParams" placeholder='Query Params: {"fields":"*"}' value='{"fields":"*"}' type="text" />
+                    <button id="filesGet">files.get</button>
+                </li>
+                <li>
+                    <input id="cFilesInFolderID" placeholder="Folder ID" type="text" />
+                    <button id="cFilesInFolder">Custom: Files in folder</button>
+                </li>
+                <li>
+                    <input id="filesUpdateID" placeholder="File ID" type="text" />
+                    <input id="fileUpdateMetadata" placeholder='Metadata: {"name": "New name"}' type="text" />
+                    <button id="filesUpdate">files.update</button>
+                </li>
+                <li>
+                    <h3>Upload plain text file to drive</h3>
+                    <input id="filesMultipartUploadName" placeholder="Title" type="text" value="Assignment description"/>
+                    <input id="filesMultipartUploadContent" placeholder="Content" type="text" value="This is a test assignment description"/>
+                    <button id="filesMultipartUpload">files.create multipart</button>
+                </li>
+                <li>
+                    <h3>Give user View permission</h3>
+                    <input id="permissionsCreateViewID" placeholder="File ID" type="text" />
+                    <input id="permissionsCreateViewEmail" placeholder="Email of view permission user" type="text" value="classroom.cache.student@gmail.com"/>
+                    <button id="permissionsCreateView">permissions.create view</button>
+                </li>
+            </ul>
+            <h2>Classroom</h2>
+            <ul>
+                <li>
+                    <input id="coursesListQueryParams" value='{"teacherId":"me","courseStates":"ACTIVE"}' placeholder='Query Params: {"fields":"*"}' type="text" />
+                    <button id="coursesList">courses.list</button>
+                </li>
+                <li>
+                    <input id="coursesGetCourseID" placeholder="Course ID" type="text" />
+                    <button id="coursesGet">courses.get</button>
+                </li>
+                <li>
+                    <input id="coursesCourseWorkListCourseID" placeholder="Course ID" type="text" />
+                    <button id="coursesCourseWorkList">courses.courseWork.list</button>
+                </li>
+                <li>
+                    <input id="coursesCourseWorkGetCourseID" placeholder="Course ID" type="text" />
+                    <input id="coursesCourseWorkGetCourseWorkID" placeholder="CourseWork ID" type="text" />
+                    <button id="coursesCourseWorkGet">courses.courseWork.get</button>
+                </li>
+                <li>
+                    <input id="coursesCourseWorkWtudentSubmissionsListCourseID" value="15042297230" placeholder="Course ID" type="text" />
+                    <input id="coursesCourseWorkWtudentSubmissionsListCourseWorkID" value="17696375812" placeholder="CourseWork ID" type="text" />
+                    <button id="coursesCourseWorkWtudentSubmissionsList">courses.courseWork.studentSubmissions.list</button>
+                </li>
+            </ul>
+            <h2>Utilities</h2>
+            <ul>
+                <li>
+                    <div><span>{"fields":"files/properties"}</span></div>
+                </li>
+            </ul>
+        </div>
+        <div style="width: 70%;height: 100%;display:block;">
+            <h2>Response</h2>
+            <pre style="word-wrap: break-word;overflow:auto;height: 500px;" id="response">
+
+            </pre>
+        </div>
+    </div>
+
+    <script src="/libs/chrome-ext-core/Core.js"></script>
+
+    <script src="/release/google_apis/Gapi.js"></script>
+    
+    <script src="/test/js/constants.js"></script>
+    <script src="/test/js/options.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1 @@
+window.open("chrome-extension://gcbjhnhklnhfdfhcopcnhfgmhnallalj/test/pages/options.html", "_blank");
