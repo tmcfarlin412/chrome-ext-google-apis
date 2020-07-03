@@ -562,11 +562,11 @@ Gapi.startCalendarFetch = function () {
         })
 }
 
-Gapi.fetchCalendarListList = function (queryParams) {
-    return Gapi.startCalendarFetch().then(token => Gapi.fetchCalendarListListNoDelay(token, queryParams))
+Gapi.fetchCalendarCalendarListList = function (queryParams) {
+    return Gapi.startCalendarFetch().then(token => Gapi.fetchCalendarCalendarListListNoDelay(token, queryParams))
 }
 
-Gapi.fetchCalendarListListNoDelay = function (token, queryParams) {
+Gapi.fetchCalendarCalendarListListNoDelay = function (token, queryParams) {
     if (!queryParams) {
         queryParams = {
         }
@@ -579,7 +579,29 @@ Gapi.fetchCalendarListListNoDelay = function (token, queryParams) {
             'Content-Type': 'application/json'
         },
     }).then((response) => {
-        Core.logi('fetchCalendarListList response', response);
+        Core.logi('fetchCalendarCalendarListList response', response);
+        return Gapi.handleCalendarApiQuotaErrors(response)
+    }).then(response => response.json())        
+}
+
+Gapi.fetchCalendarEventsList = function (calendarId, queryParams) {
+    return Gapi.startCalendarFetch().then(token => Gapi.fetchCalendarEventsListNoDelay(token, calendarId, queryParams))
+}
+
+Gapi.fetchCalendarEventsListNoDelay = function (token, calendarId, queryParams) {
+    if (!queryParams) {
+        queryParams = {
+        }
+    }
+    return fetch(Gapi.buildUrl("https://www.googleapis.com/calendar/v3/calendars/" + calendarId + "/events", queryParams), {
+        method: "GET",
+        async: true,
+        headers: {
+            "Authorization": "Bearer " + token,
+            'Content-Type': 'application/json'
+        },
+    }).then((response) => {
+        Core.logi('fetchCalendarEventsList response', response);
         return Gapi.handleCalendarApiQuotaErrors(response)
     }).then(response => response.json())        
 }
