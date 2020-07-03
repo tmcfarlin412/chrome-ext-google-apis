@@ -605,3 +605,27 @@ Gapi.fetchCalendarEventsListNoDelay = function (token, calendarId, queryParams) 
         return Gapi.handleCalendarApiQuotaErrors(response)
     }).then(response => response.json())        
 }
+
+Gapi.fetchCalendarFreebusy = function (timeMin, timeMax, timeZone, items) {
+    return Gapi.startCalendarFetch().then(token => Gapi.fetchCalendarFreebusyNoDelay(token, timeMin, timeMax, timeZone, items))
+}
+
+Gapi.fetchCalendarFreebusyNoDelay = function (token, timeMin, timeMax, timeZone, items) {
+    return fetch(Gapi.buildUrl("https://www.googleapis.com/calendar/v3/freeBusy"), {
+        method: "POST",
+        async: true,
+        headers: {
+            "Authorization": "Bearer " + token,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "timeMin": timeMin,
+            "timeMax": timeMax,
+            "timeZone": timeZone,
+            "items": items
+        })
+    }).then((response) => {
+        Core.logi('fetchCalendarFreebusy response', response);
+        return Gapi.handleCalendarApiQuotaErrors(response)
+    }).then(response => response.json())        
+}

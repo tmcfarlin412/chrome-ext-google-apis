@@ -208,4 +208,21 @@ window.onload = function () {
                 responseDiv.innerHTML = error
             });
     })
+
+    document.getElementById('Calendar_Freebusy').addEventListener('click', function () {
+        let timeMin = document.getElementById('Calendar_Freebusy_timeMin').value
+        let timeMax = document.getElementById('Calendar_Freebusy_timeMax').value
+        let timeZone = document.getElementById('Calendar_Freebusy_timeZone').value
+        let itemsValue = document.getElementById('Calendar_Freebusy_items').value
+        let items = itemsValue.length == 0 ? {} : JSON.parse(itemsValue)
+
+        Gapi.fetchCalendarFreebusy(timeMin, timeMax, timeZone, items)
+            .then(json => {
+                Core.logi(json)
+                responseDiv.innerHTML = JSON.stringify(json, undefined, 2)
+            }).catch(error => {
+                Core.logd(error);
+                responseDiv.innerHTML = error
+            });
+    })
 }
