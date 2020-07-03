@@ -183,4 +183,16 @@ window.onload = function () {
                 responseDiv.innerHTML = error
             });
     })
+
+    // Calendar
+    document.getElementById('CalendarList_list').addEventListener('click', function () {
+        Gapi.fetchCalendarListList()
+            .then(json => {
+                Core.logi(json)
+                responseDiv.innerHTML = JSON.stringify(json, undefined, 2)
+            }).catch(error => {
+                Core.logd(error);
+                responseDiv.innerHTML = error
+            });
+    })
 }

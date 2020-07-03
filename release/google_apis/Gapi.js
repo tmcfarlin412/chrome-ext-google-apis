@@ -25,9 +25,12 @@ const Gapi = {}
 
 Gapi.buildQueryParams = function (queryParams) {
     var query = "key=" + Gapi.API_KEY
-    Object.keys(queryParams).forEach(function (key) {
-        query = query + "&" + key + "=" + queryParams[key]
-    });
+    if (queryParams) {
+        Object.keys(queryParams).forEach(function (key) {
+            query = query + "&" + key + "=" + queryParams[key]
+        });
+    }
+
 
     return query
 }
@@ -491,7 +494,7 @@ Gapi.fetchCreatePermissionNoDelay = function (token, id, permissionResource, que
         queryParams = {
         }
     }
-    
+
     return fetch(Gapi.buildUrl("https://www.googleapis.com/drive/v3/files/" + id + "/permissions", queryParams), {
         method: "POST",
         async: true,
@@ -504,4 +507,79 @@ Gapi.fetchCreatePermissionNoDelay = function (token, id, permissionResource, que
         Core.logi('fetchCreatePermission response', response);
         return Gapi.handleDriveApiQuotaErrors(response)
     }).then(response => response.json())
+}
+
+
+// Calendar
+
+/**
+ * Milliseconds Per Query Minimum. Milliseconds between each query in order to adhere 
+ * to the user quota limitations. Extrapolated the value for Drive requests to come to
+ * this value.
+ * 
+ * See quotas for details
+ * https://console.developers.google.com/apis/api/calendar.googleapis.com/quotas?project=cc-for-students-app&duration=PT1H
+ */
+Gapi.CALENDAR_MSPQ_MIN = 2000
+
+Gapi.calendarFetchChain = Promise.resolve()
+
+Gapi.handleCalendarApiQuotaErrors = function (response) {
+    if (response.status == 403) {
+        Core.logd(Error('Quota error'), response)
+    }
+    return response
+}
+
+/**
+ * Retrieve Promise that delays the required amount to adhere to the user call quota,
+ * taking into account the last time a fetch was called
+ */
+Gapi.delayCalendarFetch = (function () {
+
+    /**
+     * Last time that a request was made to a Drive endpoint
+     */
+    let lastCalendarFetchTime
+
+    return function () {
+        return new Promise((resolve, reject) => {
+            let now = Date.now()
+            let delay = lastCalendarFetchTime ? (Math.max(now, lastCalendarFetchTime + Gapi.CALENDAR_MSPQ_MIN) - now) : 0
+            Core.logi('Last fetch time: ', lastCalendarFetchTime ? new Date(lastCalendarFetchTime) : 'N/A', 'Delay: ', delay)
+            setTimeout(resolve, delay)
+            lastCalendarFetchTime = now + delay
+        })
+    }
+})()
+
+Gapi.startCalendarFetch = function () {
+    return Gapi.calendarFetchChain = Gapi.calendarFetchChain
+        .then(result => Core.retrieveAuthToken())
+        .then(token => {
+            return Gapi.delayCalendarFetch()
+                .then(() => token)
+        })
+}
+
+Gapi.fetchCalendarListList = function (queryParams) {
+    return Gapi.startCalendarFetch().then(token => Gapi.fetchCalendarListListNoDelay(token, queryParams))
+}
+
+Gapi.fetchCalendarListListNoDelay = function (token, queryParams) {
+    if (!queryParams) {
+        queryParams = {
+        }
+    }
+    return fetch(Gapi.buildUrl("https://www.googleapis.com/calendar/v3/users/me/calendarList", queryParams), {
+        method: "GET",
+        async: true,
+        headers: {
+            "Authorization": "Bearer " + token,
+            'Content-Type': 'application/json'
+        },
+    }).then((response) => {
+        Core.logi('fetchCalendarListList response', response);
+        return Gapi.handleCalendarApiQuotaErrors(response)
+    }).then(response => response.json())        
 }
