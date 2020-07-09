@@ -10,7 +10,8 @@
             "https://www.googleapis.com/auth/drive",
             "https://www.googleapis.com/auth/classroom.courses",
             "https://www.googleapis.com/auth/classroom.coursework.students",
-            "https://www.googleapis.com/auth/calendar.readonly"
+            "https://www.googleapis.com/auth/calendar.readonly",
+            "https://www.googleapis.com/auth/spreadsheets"
 		]
     },
     "permissions": [

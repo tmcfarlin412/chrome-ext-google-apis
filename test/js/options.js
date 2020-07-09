@@ -225,4 +225,18 @@ window.onload = function () {
                 responseDiv.innerHTML = error
             });
     })
+
+    document.getElementById('Sheet_spreadsheets_values_clear').addEventListener('click', function () {
+        let spreadsheetId = document.getElementById('Sheet_spreadsheets_values_clear_spreadsheetId').value
+        let range = document.getElementById('Sheet_spreadsheets_values_clear_range').value
+        
+        Gapi.fetchSheetSpreadsheetsValuesClear(spreadsheetId, range)
+            .then(json => {
+                Core.logi(json)
+                responseDiv.innerHTML = JSON.stringify(json, undefined, 2)
+            }).catch(error => {
+                Core.logd(error);
+                responseDiv.innerHTML = error
+            });
+    })
 }

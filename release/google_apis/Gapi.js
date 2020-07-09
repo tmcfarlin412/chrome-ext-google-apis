@@ -629,3 +629,73 @@ Gapi.fetchCalendarFreebusyNoDelay = function (token, timeMin, timeMax, timeZone,
         return Gapi.handleCalendarApiQuotaErrors(response)
     }).then(response => response.json())        
 }
+
+// Sheet
+
+/**
+ * Milliseconds Per Query Minimum. Milliseconds between each query in order to adhere 
+ * to the user quota limitations. Extrapolated the value for Drive requests to come to
+ * this value.
+ * 
+ * See quotas for details
+ * https://console.developers.google.com/apis/api/sheet.googleapis.com/quotas?project=cc-for-students-app&duration=PT1H
+ */
+Gapi.SHEET_MSPQ_MIN = 2000
+
+Gapi.sheetFetchChain = Promise.resolve()
+
+Gapi.handleSheetApiQuotaErrors = function (response) {
+    if (response.status == 403) {
+        Core.logd(Error('Quota error'), response)
+    }
+    return response
+}
+
+/**
+ * Retrieve Promise that delays the required amount to adhere to the user call quota,
+ * taking into account the last time a fetch was called
+ */
+Gapi.delaySheetFetch = (function () {
+
+    /**
+     * Last time that a request was made to a Drive endpoint
+     */
+    let lastSheetFetchTime
+
+    return function () {
+        return new Promise((resolve, reject) => {
+            let now = Date.now()
+            let delay = lastSheetFetchTime ? (Math.max(now, lastSheetFetchTime + Gapi.SHEET_MSPQ_MIN) - now) : 0
+            Core.logi('Last fetch time: ', lastSheetFetchTime ? new Date(lastSheetFetchTime) : 'N/A', 'Delay: ', delay)
+            setTimeout(resolve, delay)
+            lastSheetFetchTime = now + delay
+        })
+    }
+})()
+
+Gapi.startSheetFetch = function () {
+    return Gapi.sheetFetchChain = Gapi.sheetFetchChain
+        .then(result => Core.retrieveAuthToken())
+        .then(token => {
+            return Gapi.delaySheetFetch()
+                .then(() => token)
+        })
+}
+
+Gapi.fetchSheetSpreadsheetsValuesClear = function (spreadsheetId, range) {
+    return Gapi.startSheetFetch().then(token => Gapi.fetchSheetSpreadsheetsValuesClearNoDelay(token, spreadsheetId, range))
+}
+
+Gapi.fetchSheetSpreadsheetsValuesClearNoDelay = function (token, spreadsheetId, range) {
+    return fetch(Gapi.buildUrl("https://sheets.googleapis.com/v4/spreadsheets/" + spreadsheetId + "/values/" + range + ":clear"), {
+        method: "POST",
+        async: true,
+        headers: {
+            "Authorization": "Bearer " + token,
+            'Content-Type': 'application/json'
+        }
+    }).then((response) => {
+        Core.logi('fetchSheetSpreadsheetsValuesClear response', response);
+        return Gapi.handleSheetApiQuotaErrors(response)
+    }).then(response => response.json())
+}
