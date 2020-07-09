@@ -699,3 +699,22 @@ Gapi.fetchSheetSpreadsheetsValuesClearNoDelay = function (token, spreadsheetId, 
         return Gapi.handleSheetApiQuotaErrors(response)
     }).then(response => response.json())
 }
+
+Gapi.fetchSheetSpreadsheetsValuesUpdate = function (spreadsheetId, range, valueRange, queryParams) {
+    return Gapi.startSheetFetch().then(token => Gapi.fetchSheetSpreadsheetsValuesUpdateNoDelay(token, spreadsheetId, range, valueRange, queryParams))
+}
+
+Gapi.fetchSheetSpreadsheetsValuesUpdateNoDelay = function (token, spreadsheetId, range, valueRange, queryParams) {
+    return fetch(Gapi.buildUrl("https://sheets.googleapis.com/v4/spreadsheets/" + spreadsheetId + "/values/" + range, queryParams), {
+        method: "PUT",
+        async: true,
+        headers: {
+            "Authorization": "Bearer " + token,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(valueRange)
+    }).then((response) => {
+        Core.logi('fetchSheetSpreadsheetsValuesClear response', response);
+        return Gapi.handleSheetApiQuotaErrors(response)
+    }).then(response => response.json())
+}

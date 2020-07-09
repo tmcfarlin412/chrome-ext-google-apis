@@ -239,4 +239,22 @@ window.onload = function () {
                 responseDiv.innerHTML = error
             });
     })
+
+    document.getElementById('Sheet_spreadsheets_values_update').addEventListener('click', function () {
+        let spreadsheetId = document.getElementById('Sheet_spreadsheets_values_update_spreadsheetId').value
+        let range = document.getElementById('Sheet_spreadsheets_values_update_range').value
+        let queryParamsValue = document.getElementById('Sheet_spreadsheets_values_update_queryParams').value
+        let queryParams = queryParamsValue.length == 0 ? {} : JSON.parse(queryParamsValue)
+        let valueRangeValue = document.getElementById('Sheet_spreadsheets_values_update_valueRange').value
+        let valueRange = queryParamsValue.length == 0 ? {} : JSON.parse(valueRangeValue)
+        
+        Gapi.fetchSheetSpreadsheetsValuesUpdate(spreadsheetId, range, valueRange, queryParams)
+            .then(json => {
+                Core.logi(json)
+                responseDiv.innerHTML = JSON.stringify(json, undefined, 2)
+            }).catch(error => {
+                Core.logd(error);
+                responseDiv.innerHTML = error
+            });
+    })
 }
